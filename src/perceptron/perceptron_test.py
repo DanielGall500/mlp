@@ -18,7 +18,7 @@ class TestPerceptron(unittest.TestCase):
 	def test_activation(self):
 		pass
 
-	def test_computation(self):
+	def test_forward_step(self):
 		pass
 
 if __name__ == "__main__":
