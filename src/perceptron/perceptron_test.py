@@ -1,5 +1,8 @@
 import unittest
+import activation
+import numpy as np
 from perceptron import Perceptron
+from activation import FunctionType
 
 class TestPerceptron(unittest.TestCase):
 	def test_initialisation(self):
@@ -15,11 +18,22 @@ class TestPerceptron(unittest.TestCase):
 		p = Perceptron(2,2)
 		self.assertEqual(p.biases.size, 2)
 
-	def test_activation(self):
-		pass
+	def test_compute_without_activation(self):
+		p = Perceptron(2,2)
+		inputs = np.array([5,10])
+		compute_without_activation = p.compute(inputs, \
+			with_activation=False)
 
-	def test_forward_step(self):
-		pass
+		self.assertEqual(compute_without_activation, 17)
+
+	def test_compute_with_activation(self):
+		p = Perceptron(2,2, FunctionType.SIGMOID)
+		inputs = np.array([5,10])
+		compute_with_activation = p.compute(inputs, \
+			with_activation=True)
+
+		self.assertEqual(compute_with_activation, activation.sigmoid(17))
+
 
 if __name__ == "__main__":
 	unittest.main()

@@ -1,15 +1,16 @@
 
 import numpy as np
 from enum import Enum
-from activation import Activation
+import activation
+from activation import FunctionType
 
 """
 --Perceptron Class--
-Takes input X and calcualtes Sum(wX + b)
+Takes input X and calculates Sum(wX + b)
 """
 class Perceptron:
 	def __init__(self, num_inputs, num_outputs, \
-		activation: Activation = Activation.SIGMOID):
+		activation = FunctionType.NONE):
 		self.number_of_inputs = num_inputs
 		self.number_of_outputs = num_outputs
 		self.weights = self._init_weights(num_inputs)
@@ -17,10 +18,10 @@ class Perceptron:
 		self.activation = activation
 		return None
 
-	def forward_step(self, inputs, with_activation=True) -> np.array:
-		if _valid_input(inputs):
+	def compute(self, inputs: np.array, with_activation=True) -> np.array:
+		if self._valid_input(inputs):
 			#Calculate Sum[wX + b]
-			multiply_weights = np.multiply(self.wseights,inputs)
+			multiply_weights = np.multiply(self.weights, inputs)
 			add_bias = np.add(multiply_weights, self.biases)
 			sum_together = np.sum(add_bias)
 
@@ -36,16 +37,10 @@ class Perceptron:
 
 	def _activate(self, x):
 		a = self.activation
-
-		if a == Activation.SIGMOID:
-			return Activation.sigmoid(x)
-		elif a == Activation.RELU:
-			return Activation.relu(x)
-		elif a == Activation.NONE:
-			return x
+		return activation.apply_activation(x, a)
 
 	def _init_weights(self, num_inputs) -> np.array:
-		return np.zeros(num_inputs)
+		return np.ones(num_inputs)
 
 	def _init_biases(self, num_inputs) -> np.array:
-		return np.zeros(num_inputs)
+		return np.ones(num_inputs)
