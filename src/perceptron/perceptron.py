@@ -1,7 +1,7 @@
 import numpy as np
 from enum import Enum
-from . import activation
-from .activation import FunctionType
+import activation
+from activation import FunctionType
 
 """
 --Perceptron Class--
@@ -45,7 +45,7 @@ class Perceptron(Unit):
 		self.output = None
 		return None
 
-	def feed(self, I: np.array, with_activation=True) -> np.array:
+	def feed(self, I: np.array) -> np.array:
 		#Ensure input is of the right size and dimension
 		if self._valid_input(I):
 			#Store input
@@ -57,12 +57,8 @@ class Perceptron(Unit):
 			sum_together = np.sum(plus_b)
 
 			#Calculating Activation(Perceptron Output)
-			if with_activation:
-				self.output = self._activate(sum_together)
-			else:
-				self.output = sum_together
-			return self.output
-		return None
+			self.output = self._activate(sum_together)
+		return self.output
 
 	def apply_weight_changes(self, dW: np.array):
 		self.dW = dW

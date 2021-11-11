@@ -18,7 +18,7 @@ class Layer:
 		pass
 
 	def size(self):
-		pass
+		return self.number_of_units
 
 	def get_units(self):
 		pass
@@ -86,9 +86,6 @@ class HiddenLayer(Layer):
 		for perc in self.units:
 			output.append(perc.get_output())
 		return np.array(output)
-
-	def size(self):
-		pass
 
 	def get_units(self):
 		return self.units

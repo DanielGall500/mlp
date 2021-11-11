@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 from perceptron import Perceptron
 from activation import FunctionType
-from . import activation
+import activation
 
 class TestPerceptron(unittest.TestCase):
 	def test_input_initialisation(self):
@@ -21,17 +21,13 @@ class TestPerceptron(unittest.TestCase):
 	def test_feed_without_activation(self):
 		p = Perceptron(2)
 		inputs = np.array([5,10])
-		compute_without_activation = p.feed(inputs, \
-			with_activation=False)
-
+		compute_without_activation = p.feed(inputs)
 		self.assertEqual(compute_without_activation, 17)
 
 	def test_feed_with_activation(self):
 		p = Perceptron(2, FunctionType.SIGMOID)
 		inputs = np.array([5,10])
-		compute_with_activation = p.feed(inputs, \
-			with_activation=True)
-
+		compute_with_activation = p.feed(inputs)
 		self.assertEqual(compute_with_activation, activation.sigmoid(17))
 
 	def test_weight_changes(self):
