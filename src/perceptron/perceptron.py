@@ -1,46 +1,99 @@
-
 import numpy as np
 from enum import Enum
-import activation
-from activation import FunctionType
+from . import activation
+from .activation import FunctionType
 
 """
 --Perceptron Class--
 Takes input X and calculates Sum(wX + b)
 """
-class Perceptron:
-	def __init__(self, num_inputs, num_outputs, \
-		activation = FunctionType.NONE):
+class Unit:
+	def __init__(self, num_inputs):
 		self.number_of_inputs = num_inputs
-		self.number_of_outputs = num_outputs
-		self.weights = self._init_weights(num_inputs)
-		self.biases = self._init_weights(num_outputs)
+		self.input = []
+		self.output = []
+
+	def __str__(self):
+		return self.input
+
+class InputUnit(Unit):
+	def __init__(self):
+		self.input = -1
+
+	def store(self, I):
+		self.input = I
+
+	def get_output(self):
+		return self.input
+	
+
+class Perceptron(Unit):
+	def __init__(self, num_inputs, \
+		activation = FunctionType.NONE):
+
+		#Basic Unit Parent
+		super(Perceptron,self).__init__(num_inputs)
+		self.input = None
+
+		#Weights & Biases
+		self.w = self._init_weights(num_inputs)
+		self.dW = None
+		self.b = self._init_biases(num_inputs)
+
+		#Result of forward pass through perceptron
 		self.activation = activation
+		self.output = None
 		return None
 
-	def compute(self, inputs: np.array, with_activation=True) -> np.array:
-		if self._valid_input(inputs):
-			#Calculate Sum[wX + b]
-			multiply_weights = np.multiply(self.weights, inputs)
-			add_bias = np.add(multiply_weights, self.biases)
-			sum_together = np.sum(add_bias)
+	def feed(self, I: np.array, with_activation=True) -> np.array:
+		#Ensure input is of the right size and dimension
+		if self._valid_input(I):
+			#Store input
+			self.input = I
 
-			#Either apply activation function or not
+			#Calculate Sum[wI + b]
+			wI = np.multiply(self.w, I)
+			plus_b = np.add(wI, self.b)
+			sum_together = np.sum(plus_b)
+
+			#Calculating Activation(Perceptron Output)
 			if with_activation:
-				return self._activate(sum_together)
+				self.output = self._activate(sum_together)
 			else:
-				return sum_together
+				self.output = sum_together
+			return self.output
+		return None
 
-	def _valid_input(self, inputs) -> bool:
-		return (len(inputs) == self.number_of_inputs) \
-		and (inputs.ndim == 1)
+	def apply_weight_changes(self, dW: np.array):
+		self.dW = dW
+		self.w = np.add(self.w, self.dW)
+		return self.w
 
-	def _activate(self, x):
-		a = self.activation
-		return activation.apply_activation(x, a)
+	def get_weights(self):
+		return self.w
+
+	def get_weight_changes(self):
+		return self.dW
+
+	def get_biases(self):
+		return self.b
+
+	def get_input(self):
+		return self.input
+
+	def get_output(self):
+		return self.output
 
 	def _init_weights(self, num_inputs) -> np.array:
 		return np.ones(num_inputs)
 
 	def _init_biases(self, num_inputs) -> np.array:
 		return np.ones(num_inputs)
+
+	def _activate(self, x):
+		a = self.activation
+		return activation.apply_activation(x, a)
+
+	def _valid_input(self, inputs) -> bool:
+		return (len(inputs) == self.number_of_inputs) \
+		and (inputs.ndim == 1)

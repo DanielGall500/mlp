@@ -1,38 +1,48 @@
 import unittest
-import activation
 import numpy as np
 from perceptron import Perceptron
 from activation import FunctionType
+from . import activation
 
 class TestPerceptron(unittest.TestCase):
-	def test_initialisation(self):
-		p = Perceptron(2,2)
+	def test_input_initialisation(self):
+		p = Perceptron(2)
 		self.assertEqual(p.number_of_inputs, 2)
-		self.assertEqual(p.number_of_outputs, 2)
+
 
 	def test_weight_initialisation(self):
-		p = Perceptron(2,2)
-		self.assertEqual(p.weights.size, 2)
+		p = Perceptron(2)
+		self.assertEqual(p.get_weights().size, 2)
 
 	def test_bias_initialisation(self):
-		p = Perceptron(2,2)
-		self.assertEqual(p.biases.size, 2)
+		p = Perceptron(2)
+		self.assertEqual(p.get_biases().size, 2)
 
-	def test_compute_without_activation(self):
-		p = Perceptron(2,2)
+	def test_feed_without_activation(self):
+		p = Perceptron(2)
 		inputs = np.array([5,10])
-		compute_without_activation = p.compute(inputs, \
+		compute_without_activation = p.feed(inputs, \
 			with_activation=False)
 
 		self.assertEqual(compute_without_activation, 17)
 
-	def test_compute_with_activation(self):
-		p = Perceptron(2,2, FunctionType.SIGMOID)
+	def test_feed_with_activation(self):
+		p = Perceptron(2, FunctionType.SIGMOID)
 		inputs = np.array([5,10])
-		compute_with_activation = p.compute(inputs, \
+		compute_with_activation = p.feed(inputs, \
 			with_activation=True)
 
 		self.assertEqual(compute_with_activation, activation.sigmoid(17))
+
+	def test_weight_changes(self):
+		p = Perceptron(2, FunctionType.SIGMOID)
+		w = p.get_weights()
+
+		weight_updates = np.array([-1,5])
+		p.apply_weight_changes(weight_updates)
+		new_weights = p.get_weights()
+
+		self.assertCountEqual(new_weights, np.array([0,6]))
 
 
 if __name__ == "__main__":
