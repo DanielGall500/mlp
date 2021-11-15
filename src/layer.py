@@ -1,6 +1,6 @@
-from perceptron.perceptron import Perceptron
-from perceptron.perceptron import Unit, InputUnit
-from perceptron.activation import FunctionType
+from src.perceptron.perceptron import Perceptron
+from src.perceptron.perceptron import Unit, InputUnit
+from src.perceptron.activation import FunctionType
 import numpy as np
 
 

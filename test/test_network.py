@@ -1,5 +1,5 @@
-from perceptron.activation import FunctionType
-from network import Network
+from src.perceptron.activation import FunctionType
+from src.network import Network
 import numpy as np
 import unittest
 

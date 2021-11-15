@@ -1,5 +1,5 @@
 import numpy as np
-from layer import InputLayer, HiddenLayer
+from src.layer import InputLayer, HiddenLayer
 
 class Network:
 	def __init__(self, input_size, \

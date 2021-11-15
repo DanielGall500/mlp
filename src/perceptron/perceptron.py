@@ -1,7 +1,7 @@
 import numpy as np
 from enum import Enum
-from perceptron.activation import FunctionType
-import perceptron.activation
+from src.perceptron.activation import FunctionType
+import src.perceptron.activation as activation
 
 """
 --Perceptron Class--
@@ -91,7 +91,7 @@ class Perceptron(Unit):
 
 	def _activate(self, x):
 		a = self.activation
-		return perceptron.activation.apply_activation(x, a)
+		return activation.apply_activation(x, a)
 
 	def _valid_input(self, inputs) -> bool:
 		return (len(inputs) == self.number_of_inputs)

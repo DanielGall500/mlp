@@ -1,5 +1,5 @@
-from layer import InputLayer, HiddenLayer
-from perceptron.activation import FunctionType
+from src.layer import InputLayer, HiddenLayer
+from src.perceptron.activation import FunctionType
 import numpy as np
 import unittest
 
@@ -18,7 +18,7 @@ class TestInputLayer(unittest.TestCase):
 		il = InputLayer(4)
 		il.feed(example_input)
 		layer_inp = il.get_input()
-		self.assertEqual(layer_inp, example_input)
+		self.assertCountEqual(layer_inp, example_input)
 
 class TestHiddenLayer(unittest.TestCase):
 	def test_feed(self):

@@ -1,8 +1,8 @@
 import unittest
 import numpy as np
-from perceptron import Perceptron
-from activation import FunctionType
-import activation
+from src.perceptron.perceptron import Perceptron
+from src.perceptron.activation import FunctionType
+import src.perceptron.activation as activation
 
 class TestPerceptron(unittest.TestCase):
 	def test_input_initialisation(self):
