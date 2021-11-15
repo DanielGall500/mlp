@@ -6,6 +6,7 @@ class Network:
 		num_hidden_layers, num_hidden_units, \
 		num_output_units, hidden_activation, \
 		output_activation):
+		self.cache = {}
 		self.input_size = input_size
 		self.num_hidden_layers = num_hidden_layers
 		self.num_hidden_units = num_hidden_units
@@ -21,14 +22,17 @@ class Network:
 		if self._valid_input(I):
 			#Feed Input Layer
 			input_layer_output = self.il.feed(I)
+			self.cache['input'] = input_layer_output
 
 			#Feed Hidden Layers
 			layer_output = input_layer_output
 			for i, layer in enumerate(self.hl):
 				layer_output = layer.feed(layer_output)
+				self.cache['hidden_layer_{}'.format(i)] = layer_output
 
 			#Feed Output Layer
 			layer_output = self.ol.feed(layer_output)
+			self.cache['output_layer'] = layer_output
 		else:
 			raise Exception("Network: Invalid Input")
 		return layer_output

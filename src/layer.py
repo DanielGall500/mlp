@@ -72,7 +72,6 @@ class HiddenLayer(Layer):
 		if self._valid_input(I):
 			self.input = I
 			for perc in self.units:
-				print("Input: ", I)
 				perc.feed(I)
 		else:
 			raise Exception("Hidden Layer: Invalid Input {}".format(I))
@@ -84,7 +83,7 @@ class HiddenLayer(Layer):
 	def get_output(self) -> np.array:
 		output = []
 		for perc in self.units:
-			output.append([perc.get_output()])
+			output.append(perc.get_output())
 		return np.array(output)
 
 	def get_weights_and_biases(self):
@@ -101,10 +100,6 @@ class HiddenLayer(Layer):
 		return self.units
 
 	def _valid_input(self, I):
-		print("-----")
-		print("Length: ", len(I))
-		print("Inputs Per Unit: ", self.inputs_per_unit)
-		print("-----")
 		return len(I) == self.inputs_per_unit
 	
 

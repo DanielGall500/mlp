@@ -53,21 +53,14 @@ class Perceptron(Unit):
 
 			unit_calculations = []
 
-			#Ensures we don't loop a 1D array instead of
-			#a 2D array
-			if I.ndim <= 1:
-				I = np.array([I])
+			#Calculate Sum[wI + b]
+			wI = np.multiply(self.w, I)
+			plus_b = np.add(wI, self.b)
+			sum_together = np.sum(plus_b)
 
-			for unit_output in I:
-				#Calculate Sum[wI + b]
-				wI = np.multiply(self.w, unit_output)
-				plus_b = np.add(wI, self.b)
-				sum_together = np.sum(plus_b)
-				unit_calculations.append(sum_together)
-		
+	
 			#Calculating Activation(Perceptron Output)
-			sum_units = sum(unit_calculations)
-			self.output = self._activate(sum_units)
+			self.output = self._activate(sum_together)
 		else:
 			raise Exception("Perceptron: Invalid Input {}".format(I))
 
