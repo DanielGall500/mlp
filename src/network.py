@@ -77,6 +77,6 @@ class Network:
 		return hidden_layers
 
 	def _init_output_layer(self, num_units, input_size, activation):
-		return HiddenLayer(num_units, num_units, activation)
+		return HiddenLayer(num_units, self.num_hidden_units, activation)
 
 

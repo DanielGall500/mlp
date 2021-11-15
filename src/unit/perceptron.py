@@ -1,7 +1,7 @@
 import numpy as np
 from enum import Enum
-from src.perceptron.activation import FunctionType
-import src.perceptron.activation as activation
+import src.unit.activation as activation
+from src.unit.activation import FunctionType
 
 """
 --Perceptron Class--
@@ -51,13 +51,23 @@ class Perceptron(Unit):
 			#Store input
 			self.input = I
 
-			#Calculate Sum[wI + b]
-			wI = np.multiply(self.w, I)
-			plus_b = np.add(wI, self.b)
-			sum_together = np.sum(plus_b)
+			unit_calculations = []
 
+			#Ensures we don't loop a 1D array instead of
+			#a 2D array
+			if I.ndim <= 1:
+				I = np.array([I])
+
+			for unit_output in I:
+				#Calculate Sum[wI + b]
+				wI = np.multiply(self.w, unit_output)
+				plus_b = np.add(wI, self.b)
+				sum_together = np.sum(plus_b)
+				unit_calculations.append(sum_together)
+		
 			#Calculating Activation(Perceptron Output)
-			self.output = self._activate(sum_together)
+			sum_units = sum(unit_calculations)
+			self.output = self._activate(sum_units)
 		else:
 			raise Exception("Perceptron: Invalid Input {}".format(I))
 

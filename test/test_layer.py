@@ -1,5 +1,5 @@
 from src.layer import InputLayer, HiddenLayer
-from src.perceptron.activation import FunctionType
+from src.unit.activation import FunctionType
 import numpy as np
 import unittest
 

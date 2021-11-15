@@ -1,6 +1,6 @@
-from src.perceptron.perceptron import Perceptron
-from src.perceptron.perceptron import Unit, InputUnit
-from src.perceptron.activation import FunctionType
+from src.unit.perceptron import Perceptron
+from src.unit.perceptron import Unit, InputUnit
+from src.unit.activation import FunctionType
 import numpy as np
 
 
@@ -57,7 +57,6 @@ class InputLayer(Layer):
 		return len(inp) == self.size()
 
 class HiddenLayer(Layer):
-
 	def __init__(self, num_units, inputs_per_unit, \
 		activation: FunctionType):
 		super(HiddenLayer, self).__init__(num_units)
@@ -73,9 +72,10 @@ class HiddenLayer(Layer):
 		if self._valid_input(I):
 			self.input = I
 			for perc in self.units:
+				print("Input: ", I)
 				perc.feed(I)
 		else:
-			raise Exception("Hidden Layer: Invalid Input")
+			raise Exception("Hidden Layer: Invalid Input {}".format(I))
 		return self.get_output()
 
 	def get_input(self) -> np.array:
@@ -101,6 +101,10 @@ class HiddenLayer(Layer):
 		return self.units
 
 	def _valid_input(self, I):
+		print("-----")
+		print("Length: ", len(I))
+		print("Inputs Per Unit: ", self.inputs_per_unit)
+		print("-----")
 		return len(I) == self.inputs_per_unit
 	
 
