@@ -1,7 +1,7 @@
 import numpy as np
 from enum import Enum
-import activation
-from activation import FunctionType
+from perceptron.activation import FunctionType
+import perceptron.activation
 
 """
 --Perceptron Class--
@@ -18,7 +18,7 @@ class Unit:
 
 class InputUnit(Unit):
 	def __init__(self):
-		self.input = -1
+		self.input = None
 
 	def store(self, I):
 		self.input = I
@@ -58,6 +58,9 @@ class Perceptron(Unit):
 
 			#Calculating Activation(Perceptron Output)
 			self.output = self._activate(sum_together)
+		else:
+			raise Exception("Perceptron: Invalid Input {}".format(I))
+
 		return self.output
 
 	def apply_weight_changes(self, dW: np.array):
@@ -88,8 +91,7 @@ class Perceptron(Unit):
 
 	def _activate(self, x):
 		a = self.activation
-		return activation.apply_activation(x, a)
+		return perceptron.activation.apply_activation(x, a)
 
 	def _valid_input(self, inputs) -> bool:
-		return (len(inputs) == self.number_of_inputs) \
-		and (inputs.ndim == 1)
+		return (len(inputs) == self.number_of_inputs)

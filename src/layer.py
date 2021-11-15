@@ -1,6 +1,6 @@
 from perceptron.perceptron import Perceptron
 from perceptron.perceptron import Unit, InputUnit
-from perceptron.perceptron import activation
+from perceptron.activation import FunctionType
 import numpy as np
 
 
@@ -36,14 +36,13 @@ class InputLayer(Layer):
 			for i, x in enumerate(I):
 				unit = self.units[i]
 				self.units[i].store(x)
-			return True
-		return False
+		return self.get_output()
 
 	def get_input(self):
 		layer_input = []
 		for unit in self.get_units():
 			layer_input.append(unit.get_output())
-		return layer_input
+		return np.array(layer_input)
 
 	def get_output(self):
 		return self.get_input()
@@ -60,7 +59,7 @@ class InputLayer(Layer):
 class HiddenLayer(Layer):
 
 	def __init__(self, num_units, inputs_per_unit, \
-		activation: activation.FunctionType):
+		activation: FunctionType):
 		super(HiddenLayer, self).__init__(num_units)
 		self.inputs_per_unit = inputs_per_unit
 		self.input = None
@@ -70,13 +69,14 @@ class HiddenLayer(Layer):
 			percep = Perceptron(inputs_per_unit, activation)
 			self.units.append(percep)
 
-	def feed(self, I) -> bool:
+	def feed(self, I):
 		if self._valid_input(I):
 			self.input = I
 			for perc in self.units:
 				perc.feed(I)
-			return True
-		return False
+		else:
+			raise Exception("Hidden Layer: Invalid Input")
+		return self.get_output()
 
 	def get_input(self) -> np.array:
 		return self.input
@@ -84,14 +84,24 @@ class HiddenLayer(Layer):
 	def get_output(self) -> np.array:
 		output = []
 		for perc in self.units:
-			output.append(perc.get_output())
+			output.append([perc.get_output()])
 		return np.array(output)
+
+	def get_weights_and_biases(self):
+		weights = []
+		biases = []
+		for unit in self.units:
+			w = unit.get_weights()
+			b = unit.get_biases()
+			weights.append(w)
+			biases.append(b)
+		return weights, biases
 
 	def get_units(self):
 		return self.units
 
 	def _valid_input(self, I):
-		return I.shape[0] == self.inputs_per_unit
+		return len(I) == self.inputs_per_unit
 	
 
 class OutputLayer(Layer):

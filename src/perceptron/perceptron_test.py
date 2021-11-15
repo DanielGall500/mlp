@@ -9,7 +9,6 @@ class TestPerceptron(unittest.TestCase):
 		p = Perceptron(2)
 		self.assertEqual(p.number_of_inputs, 2)
 
-
 	def test_weight_initialisation(self):
 		p = Perceptron(2)
 		self.assertEqual(p.get_weights().size, 2)

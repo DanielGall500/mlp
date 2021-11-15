@@ -1,7 +1,7 @@
-import unittest
 from layer import InputLayer, HiddenLayer
 from perceptron.activation import FunctionType
 import numpy as np
+import unittest
 
 class TestInputLayer(unittest.TestCase):
 	def test_init(self):
@@ -45,6 +45,11 @@ class TestHiddenLayer(unittest.TestCase):
 		for i, perc in enumerate(hl.units):
 			self.assertEqual(perc.get_output(), output[i])
 
+	def test_get_weights_and_biases(self):
+		hl = HiddenLayer(2,2, FunctionType.NONE)
+		w,b = hl.get_weights_and_biases()
+		self.assertEqual(len(w),2)
+		self.assertEqual(len(b),2)
 
 if __name__ == "__main__":
 	unittest.main()
