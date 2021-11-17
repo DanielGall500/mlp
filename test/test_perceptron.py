@@ -15,19 +15,19 @@ class TestPerceptron(unittest.TestCase):
 
 	def test_bias_initialisation(self):
 		p = Perceptron(2)
-		self.assertEqual(p.get_biases().size, 2)
+		self.assertEqual(p.get_bias(), 1)
 
 	def test_feed_without_activation(self):
 		p = Perceptron(2)
 		inputs = np.array([5,10])
 		compute_without_activation = p.feed(inputs)
-		self.assertEqual(compute_without_activation, 17)
+		self.assertEqual(compute_without_activation, 16)
 
 	def test_feed_with_activation(self):
 		p = Perceptron(2, FunctionType.SIGMOID)
 		inputs = np.array([5,10])
 		compute_with_activation = p.feed(inputs)
-		self.assertEqual(compute_with_activation, activation.sigmoid(17))
+		self.assertEqual(compute_with_activation, activation.sigmoid(16))
 
 	def test_weight_changes(self):
 		p = Perceptron(2, FunctionType.SIGMOID)
@@ -39,6 +39,9 @@ class TestPerceptron(unittest.TestCase):
 
 		self.assertCountEqual(new_weights, np.array([0,6]))
 
+	def test_output_derivative(self):
+		p = Perceptron(2, FunctionType.SIGMOID)
+		inputs = np.array([5,10])
+		compute_with_activation = p.feed(inputs)
+		print("\nOutput Derivative: {}".format(p.get_derivative()))
 
-if __name__ == "__main__":
-	unittest.main()

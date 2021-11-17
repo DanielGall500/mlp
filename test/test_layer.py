@@ -50,6 +50,3 @@ class TestHiddenLayer(unittest.TestCase):
 		w,b = hl.get_weights_and_biases()
 		self.assertEqual(len(w),2)
 		self.assertEqual(len(b),2)
-
-if __name__ == "__main__":
-	unittest.main()

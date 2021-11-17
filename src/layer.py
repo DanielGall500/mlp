@@ -58,14 +58,16 @@ class InputLayer(Layer):
 
 class HiddenLayer(Layer):
 	def __init__(self, num_units, inputs_per_unit, \
-		activation: FunctionType):
+		activation: FunctionType, weight_init='uniform', bias_init='zeros'):
 		super(HiddenLayer, self).__init__(num_units)
 		self.inputs_per_unit = inputs_per_unit
+		self.weight_init = weight_init
 		self.input = None
 		self.units = []
 
 		for i in range(num_units):
-			percep = Perceptron(inputs_per_unit, activation)
+			percep = Perceptron(inputs_per_unit, activation, \
+				weight_init=weight_init, bias_init=bias_init)
 			self.units.append(percep)
 
 	def feed(self, I):
@@ -91,7 +93,7 @@ class HiddenLayer(Layer):
 		biases = []
 		for unit in self.units:
 			w = unit.get_weights()
-			b = unit.get_biases()
+			b = unit.get_bias()
 			weights.append(w)
 			biases.append(b)
 		return weights, biases

@@ -5,37 +5,55 @@ class Network:
 	def __init__(self, input_size, \
 		num_hidden_layers, num_hidden_units, \
 		num_output_units, hidden_activation, \
-		output_activation):
-		self.cache = {}
+		output_activation, weight_init='uniform',
+		bias_init='ones'):
 		self.input_size = input_size
 		self.num_hidden_layers = num_hidden_layers
 		self.num_hidden_units = num_hidden_units
 		self.num_output_units = num_output_units
+		self.cache = []
+
+		self.weight_init = weight_init
+		self.bias_init = bias_init
 
 		self.il = self._init_input_layer(input_size)
 		self.hl = self._init_hidden_layers(num_hidden_layers, \
-			num_hidden_units, input_size, hidden_activation)
+			num_hidden_units, input_size, hidden_activation, weight_init,bias_init)
 		self.ol = self._init_output_layer(num_output_units, input_size, \
-			output_activation)
+			output_activation, weight_init, bias_init)
 
 	def feed(self, I):
 		if self._valid_input(I):
+			#Empty cache
+			self.cache = []
+
 			#Feed Input Layer
 			input_layer_output = self.il.feed(I)
-			self.cache['input'] = input_layer_output
 
 			#Feed Hidden Layers
 			layer_output = input_layer_output
 			for i, layer in enumerate(self.hl):
+				#Pass through layer
 				layer_output = layer.feed(layer_output)
-				self.cache['hidden_layer_{}'.format(i)] = layer_output
 
-			#Feed Output Layer
-			layer_output = self.ol.feed(layer_output)
-			self.cache['output_layer'] = layer_output
+				#Store in the cache for backprop
+				hidden_layer_info = self.get_layer_info(layer)
+				self.cache.append(hidden_layer_info)
+
+			#Feed Output Layer & Store Info in Cache
+			self.ol.feed(layer_output)
+			output_layer_info = self.get_layer_info(self.ol)
+			self.cache.append(output_layer_info)
 		else:
-			raise Exception("Network: Invalid Input")
+			raise Exception("Network: Invalid Input {}".format(I))
 		return layer_output
+
+	def get_layer_info(self, layer):
+		w, b = layer.get_weights_and_biases()
+		activations = layer.get_output().tolist()
+		return {'activations': activations,\
+				'weights': w, \
+				'biases': b }
 
 	def print(self):
 		print("--Input Layer--")
@@ -60,6 +78,9 @@ class Network:
 		print("Output: ", self.ol.get_output())
 		print("----\n")
 
+	def get_cache(self):
+		return self.cache
+
 	def _valid_input(self, I):
 		return len(I) == self.input_size
 
@@ -67,20 +88,22 @@ class Network:
 		return InputLayer(input_size)
 
 	def _init_hidden_layers(self, num_layers, num_units, \
-		input_size, activation):
-		hl = HiddenLayer(num_units, input_size, activation)
+		input_size, activation, weight_init='uniform', bias_init='zeros'):
 		hidden_layers = []
 		for i in range(num_layers):
 			if i == 0:
 				#Input length = Number of data samples
-				layer = HiddenLayer(num_units, input_size, activation)
+				layer = HiddenLayer(num_units, input_size, activation,\
+				 weight_init, bias_init)
 			else:
 				#Input length = Number of units in previous layer
-				layer = HiddenLayer(num_units, num_units, activation)
+				layer = HiddenLayer(num_units, num_units, activation, \
+					weight_init, bias_init)
 			hidden_layers.append(layer)
 		return hidden_layers
 
-	def _init_output_layer(self, num_units, input_size, activation):
-		return HiddenLayer(num_units, self.num_hidden_units, activation)
+	def _init_output_layer(self, num_units, input_size, activation, weight_init, bias_init):
+		return HiddenLayer(num_units, self.num_hidden_units, activation,\
+			weight_init, bias_init)
 
 

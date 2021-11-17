@@ -1,7 +1,7 @@
 import numpy as np
 from enum import Enum
 import src.unit.activation as activation
-from src.unit.activation import FunctionType
+from src.unit.activation import FunctionType, WeightsCreator
 
 """
 --Perceptron Class--
@@ -25,20 +25,23 @@ class InputUnit(Unit):
 
 	def get_output(self):
 		return self.input
-	
 
 class Perceptron(Unit):
 	def __init__(self, num_inputs, \
-		activation = FunctionType.NONE):
+		activation = FunctionType.NONE, \
+		weight_init='uniform', bias_init='ones'):
 
 		#Basic Unit Parent
 		super(Perceptron,self).__init__(num_inputs)
 		self.input = None
 
 		#Weights & Biases
-		self.w = self._init_weights(num_inputs)
+		self.weight_init = weight_init
+		self.bias_init = bias_init
+
+		self.w = self._init_weights(num_inputs, weight_init)
 		self.dW = None
-		self.b = self._init_biases(num_inputs)
+		self.b = self._init_biases(num_inputs, bias_init)
 
 		#Result of forward pass through perceptron
 		self.activation = activation
@@ -55,12 +58,11 @@ class Perceptron(Unit):
 
 			#Calculate Sum[wI + b]
 			wI = np.multiply(self.w, I)
-			plus_b = np.add(wI, self.b)
-			sum_together = np.sum(plus_b)
+			sum_together = np.sum(wI)
+			plus_b = np.add(sum_together, self.b)
 
-	
 			#Calculating Activation(Perceptron Output)
-			self.output = self._activate(sum_together)
+			self.output = self._activate(plus_b)
 		else:
 			raise Exception("Perceptron: Invalid Input {}".format(I))
 
@@ -77,7 +79,7 @@ class Perceptron(Unit):
 	def get_weight_changes(self):
 		return self.dW
 
-	def get_biases(self):
+	def get_bias(self):
 		return self.b
 
 	def get_input(self):
@@ -86,11 +88,30 @@ class Perceptron(Unit):
 	def get_output(self):
 		return self.output
 
-	def _init_weights(self, num_inputs) -> np.array:
-		return np.ones(num_inputs)
+	def get_derivative(self):
+		if self.output != None:
+			if self.activation == FunctionType.SIGMOID:
+				return activation.sigmoid_derivative(self.output)
+			else:
+				raise Exception("Invalid Activation Function")
+		else:
+			raise Exception("Perceptron Has No Previous Output")
 
-	def _init_biases(self, num_inputs) -> np.array:
-		return np.ones(num_inputs)
+
+	def _init_weights(self, num_weights, init_type) -> np.array:
+		w_initialiser = WeightsCreator(num_weights)
+		return w_initialiser.get(init_type)
+
+	def _init_biases(self, num_inputs, init_type) -> np.array:
+		if init_type == 'ones':
+			return 1
+			#return np.ones(num_inputs)
+		elif init_type == 'zeros':
+			return 0
+			#return np.zeros(num_inputs)
+		else:
+			raise Exception("Invalid Bias Initialisation: {}"\
+				.format(init_type))
 
 	def _activate(self, x):
 		a = self.activation
