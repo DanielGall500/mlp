@@ -31,27 +31,45 @@ class Network:
 			input_layer_output = self.il.feed(I)
 
 			#Feed Hidden Layers
-			layer_output = input_layer_output
+			layer_activations = input_layer_output
 			for i, layer in enumerate(self.hl):
 				#Pass through layer
-				layer_output = layer.feed(layer_output)
+				layer_outputs, layer_activations = layer.feed(layer_activations)
 
 				#Store in the cache for backprop
 				hidden_layer_info = self.get_layer_info(layer)
 				self.cache.append(hidden_layer_info)
 
 			#Feed Output Layer & Store Info in Cache
-			self.ol.feed(layer_output)
+			self.ol.feed(layer_activations)
 			output_layer_info = self.get_layer_info(self.ol)
 			self.cache.append(output_layer_info)
 		else:
 			raise Exception("Network: Invalid Input {}".format(I))
-		return layer_output
+		return self.cache
+
+	def backward(self, dy):
+		#Performs a backward pass of the network
+
+		#Last layer: no activation
+		num_layers = len(self.cache)
+		output_layer = self.cache[num_layers-1]
+		print(output_layer)
+
+	def affine_backward(self, dout, I, w, b):
+		dx, dw, db = None, None, None
+		dw = np.reshape(x, (x.shape[0], -1)).T.dot(dout)
+		dw = np.reshape(dw, w.shape)
+
+		return dw
 
 	def get_layer_info(self, layer):
 		w, b = layer.get_weights_and_biases()
-		activations = layer.get_output().tolist()
-		return {'activations': activations,\
+		l_outputs, l_activations = layer.get_output_and_activations()
+		l_outputs = l_outputs.tolist()
+		l_activations = l_activations.tolist()
+		return {'outputs': l_outputs,\
+				'activations': l_activations, \
 				'weights': w, \
 				'biases': b }
 

@@ -36,14 +36,14 @@ class TestHiddenLayer(unittest.TestCase):
 
 		self.assertCountEqual(hl.get_input(), I)
 
-	def test_output(self):
+	def test_output_and_activations(self):
 		hl = HiddenLayer(2,2, FunctionType.NONE)
 		I = np.array([5,10])
 		hl.feed(I)
-		output = hl.get_output()
+		outputs, activations = hl.get_output_and_activations()
 
 		for i, perc in enumerate(hl.units):
-			self.assertEqual(perc.get_output(), output[i])
+			self.assertEqual(perc.get_output_and_activation()[0], outputs[i])
 
 	def test_get_weights_and_biases(self):
 		hl = HiddenLayer(2,2, FunctionType.NONE)

@@ -11,7 +11,7 @@ class Unit:
 	def __init__(self, num_inputs):
 		self.number_of_inputs = num_inputs
 		self.input = []
-		self.output = []
+		self.outputs = []
 
 	def __str__(self):
 		return self.input
@@ -44,8 +44,9 @@ class Perceptron(Unit):
 		self.b = self._init_biases(num_inputs, bias_init)
 
 		#Result of forward pass through perceptron
-		self.activation = activation
-		self.output = None
+		self.activation_type = activation
+		self.outputs = None
+		self.activations = None
 		return None
 
 	def feed(self, I: np.array) -> np.array:
@@ -62,11 +63,12 @@ class Perceptron(Unit):
 			plus_b = np.add(sum_together, self.b)
 
 			#Calculating Activation(Perceptron Output)
-			self.output = self._activate(plus_b)
+			self.outputs = plus_b
+			self.activations = self._activate(plus_b)
 		else:
 			raise Exception("Perceptron: Invalid Input {}".format(I))
 
-		return self.output
+		return self.outputs, self.activations
 
 	def apply_weight_changes(self, dW: np.array):
 		self.dW = dW
@@ -85,13 +87,13 @@ class Perceptron(Unit):
 	def get_input(self):
 		return self.input
 
-	def get_output(self):
-		return self.output
+	def get_output_and_activation(self):
+		return self.outputs, self.activations
 
 	def get_derivative(self):
-		if self.output != None:
-			if self.activation == FunctionType.SIGMOID:
-				return activation.sigmoid_derivative(self.output)
+		if self.outputs != None:
+			if self.activation_type == FunctionType.SIGMOID:
+				return activation.sigmoid_derivative(self.outputs)
 			else:
 				raise Exception("Invalid Activation Function")
 		else:
@@ -114,7 +116,7 @@ class Perceptron(Unit):
 				.format(init_type))
 
 	def _activate(self, x):
-		a = self.activation
+		a = self.activation_type
 		return activation.apply_activation(x, a)
 
 	def _valid_input(self, inputs) -> bool:

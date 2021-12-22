@@ -25,6 +25,7 @@ def sigmoid_derivative(x):
 def relu(x):
 	return x if x > 0 else 0
 
+
 #Weights & Biases Initialisation
 class WeightsCreator:
 	def __init__(self, num_weights):

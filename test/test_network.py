@@ -42,9 +42,5 @@ class NetworkTest(unittest.TestCase):
 		I = np.array([5])
 		n.feed(I)
 		cache = n.get_cache()
-		"""
-		for i,layer in enumerate(cache):
-			print("Layer {}".format(i))
-			print(layer)
-		"""
+		n.backward(None)
 
